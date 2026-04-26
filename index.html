@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bileşik Adlandırma Oyunu</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f1117;
+      color: #e8e8e8;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      color: #ffffff;
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: #888;
+      margin-bottom: 1.5rem;
+    }
+
+    .scoreboard {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .score-box {
+      text-align: center;
+    }
+
+    .score-box .label {
+      font-size: 11px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .score-box .val {
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .progress-bar {
+      width: 100%;
+      max-width: 640px;
+      height: 4px;
+      background: #2a2a3a;
+      border-radius: 2px;
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #4ade80;
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
+
+    .game-area {
+      display: flex;
+      gap: 3rem;
+      max-width: 700px;
+      width: 100%;
+      align-items: flex-start;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .column {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .col-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #666;
+      margin-bottom: 4px;
+      text-align: center;
+    }
+
+    .card {
+      background: #1a1b2e;
+      border: 1.5px solid #2e2e4e;
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      font-size: 15px;
+      cursor: grab;
+      user-select: none;
+      transition: transform 0.15s, border-color 0.15s, background 0.15s;
+      text-align: center;
+      position: relative;
+    }
+
+    .card:active { cursor: grabbing; }
+
+    .card.dragging {
+      opacity: 0.4;
+      transform: scale(0.97);
+    }
+
+    .card.matched {
+      background: #0f2e1a;
+      border-color: #4ade80;
+      color: #4ade80;
+      cursor: default;
+    }
+
+    .drop-zone {
+      background: #12121e;
+      border: 1.5px dashed #2e2e4e;
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      min-height: 48px;
+      text-align: center;
+      font-size: 15px;
+      color: #555;
+      transition: border-color 0.15s, background 0.15s;
+      position: relative;
+    }
+
+    .drop-zone.over {
+      border-color: #6366f1;
+      background: #1a1a35;
+    }
+
+    .drop-zone.correct {
+      background: #0f2e1a;
+      border-color: #4ade80;
+      color: #4ade80;
+      border-style: solid;
+    }
+
+    .drop-zone.wrong {
+      background: #2e0f0f;
+      border-color: #f87171;
+      color: #f87171;
+      border-style: solid;
+    }
+
+    .feedback-msg {
+      text-align: center;
+      font-size: 14px;
+      min-height: 1.5rem;
+      margin-top: 1.5rem;
+      color: #aaa;
+    }
+
+    .btn {
+      margin-top: 1.5rem;
+      padding: 0.6rem 2rem;
+      border-radius: 8px;
+      border: 1.5px solid #333;
+      background: #1a1b2e;
+      color: #e8e8e8;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.15s;
+      display: none;
+    }
+
+    .btn:hover { background: #252540; }
+    .btn.show { display: inline-block; }
+
+    .end-screen {
+      text-align: center;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .end-screen.show { display: flex; }
+
+    .big-score {
+      font-size: 3.5rem;
+      font-weight: 700;
+      color: #4ade80;
+    }
+
+    .end-msg {
+      font-size: 1rem;
+      color: #aaa;
+    }
+
+    sub { font-size: 0.65em; }
+  </style>
+</head>
+<body>
+
+<h1>Bileşik Eşleştirme</h1>
+<p class="subtitle">Formülleri doğru isimleriyle eşleştir</p>
+
+<div class="scoreboard">
+  <div class="score-box"><div class="label">Puan</div><div class="val" id="score">0</div></div>
+  <div class="score-box"><div class="label">Tur</div><div class="val" id="round-num">1 / 5</div></div>
+  <div class="score-box"><div class="label">Doğru</div><div class="val" id="correct-total">0</div></div>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" id="progress" style="width:20%"></div></div>
+
+<div id="main">
+  <div class="game-area" id="game-area">
+    <div class="column">
+      <div class="col-title">Formüller</div>
+      <div id="formulas"></div>
+    </div>
+    <div class="column">
+      <div class="col-title">İsimler</div>
+      <div id="dropzones"></div>
+    </div>
+  </div>
+
+  <p class="feedback-msg" id="feedback"></p>
+  <button class="btn" id="next-btn" onclick="nextRound()">Sonraki tur →</button>
+</div>
+
+<div class="end-screen" id="end-screen">
+  <div class="big-score" id="final-score"></div>
+  <div class="end-msg" id="final-msg"></div>
+  <button class="btn show" onclick="restartGame()">Tekrar oyna</button>
+</div>
+
+<script>
+  const allCompounds = [
+    { formula: "HCl", name: "Hidrojen klorür" },
+    { formula: "CO₂", name: "Karbon dioksit" },
+    { formula: "CO", name: "Karbon monoksit" },
+    { formula: "SO₂", name: "Kükürt dioksit" },
+    { formula: "SO₃", name: "Kükürt trioksit" },
+    { formula: "NO₂", name: "Azot dioksit" },
+    { formula: "Cu₂O", name: "Bakır (I) oksit" },
+    { formula: "N₂O", name: "Diazot monoksit" },
+    { formula: "PCl₃", name: "Fosfor triklorür" },
+    { formula: "PCl₅", name: "Fosfor pentaklorür" },
+    { formula: "CCl₄", name: "Karbon tetraklorür" },
+    { formula: "SF₆", name: "Kükürt hekzaflorür" },
+    { formula: "BF₃", name: "Bor triflorür" },
+    { formula: "H₂S", name: "Dihidrojen sülfür" },
+    { formula: "N₂O₅", name: "Diazot pentaoksit" },
+    { formula: "CuO", name: "Bakır (II) oksit"},
+  ];
+
+  const ROUND_SIZE = 4;
+  const TOTAL_ROUNDS = 5;
+
+  let rounds = [];
+  let currentRound = 0;
+  let score = 0;
+  let correctTotal = 0;
+  let draggedCard = null;
+  let roundMatched = 0;
+  let gameOver = false;
+
+  function shuffle(arr) {
+    return [...arr].sort(() => Math.random() - 0.5);
+  }
+
+  function buildRawFormula(f) { return f; }
+
+  function buildRounds() {
+    const shuffled = shuffle(allCompounds);
+    rounds = [];
+    for (let i = 0; i < TOTAL_ROUNDS; i++) {
+      rounds.push(shuffled.slice(i * ROUND_SIZE, i * ROUND_SIZE + ROUND_SIZE));
+    }
+  }
+
+  function renderRound() {
+    if (gameOver || currentRound >= TOTAL_ROUNDS) return;
+    const pair = rounds[currentRound];
+    roundMatched = 0;
+    document.getElementById('round-num').textContent = `${currentRound + 1} / ${TOTAL_ROUNDS}`;
+    document.getElementById('progress').style.width = `${((currentRound + 1) / TOTAL_ROUNDS) * 100}%`;
+    document.getElementById('feedback').textContent = 'Formülü sürükle, doğru isme bırak!';
+    document.getElementById('next-btn').className = 'btn';
+
+    const formulasEl = document.getElementById('formulas');
+    const dropzonesEl = document.getElementById('dropzones');
+    formulasEl.innerHTML = '';
+    dropzonesEl.innerHTML = '';
+
+    const shuffledPairs = shuffle(pair);
+    const shuffledNames = shuffle(pair);
+
+    shuffledPairs.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.draggable = true;
+      card.dataset.formula = item.formula;
+      card.innerHTML = item.formula.replace(/([₀-₉]+)/g, m => `<sub>${[...m].map(c => '₀₁₂₃₄₅₆₇₈₉'.indexOf(c)).join('')}</sub>`);
+      card.addEventListener('dragstart', onDragStart);
+      card.addEventListener('dragend', onDragEnd);
+      formulasEl.appendChild(card);
+    });
+
+    shuffledNames.forEach(item => {
+      const zone = document.createElement('div');
+      zone.className = 'drop-zone';
+      zone.dataset.answer = item.formula;
+      zone.textContent = item.name;
+      zone.addEventListener('dragover', onDragOver);
+      zone.addEventListener('dragleave', onDragLeave);
+      zone.addEventListener('drop', onDrop);
+      dropzonesEl.appendChild(zone);
+    });
+  }
+
+  function onDragStart(e) {
+    draggedCard = e.target;
+    setTimeout(() => e.target.classList.add('dragging'), 0);
+  }
+
+  function onDragEnd(e) {
+    e.target.classList.remove('dragging');
+  }
+
+  function onDragOver(e) {
+    e.preventDefault();
+    if (!e.currentTarget.classList.contains('correct')) {
+      e.currentTarget.classList.add('over');
+    }
+  }
+
+  function onDragLeave(e) {
+    e.currentTarget.classList.remove('over');
+  }
+
+  function onDrop(e) {
+    e.preventDefault();
+    const zone = e.currentTarget;
+    zone.classList.remove('over');
+    if (zone.classList.contains('correct')) return;
+    if (!draggedCard) return;
+
+    const formula = draggedCard.dataset.formula;
+    const answer = zone.dataset.answer;
+
+    if (formula === answer) {
+      zone.classList.add('correct');
+      draggedCard.classList.add('matched');
+      draggedCard.draggable = false;
+      score += 10;
+      correctTotal++;
+      roundMatched++;
+      document.getElementById('score').textContent = score;
+      document.getElementById('correct-total').textContent = correctTotal;
+      document.getElementById('feedback').textContent = 'Doğru eşleşme!';
+
+      if (roundMatched === rounds[currentRound].length) {
+        document.getElementById('feedback').textContent = 'Tüm eşleşmeler doğru!';
+        if (currentRound < TOTAL_ROUNDS - 1) {
+          document.getElementById('next-btn').className = 'btn show';
+        } else {
+          gameOver = true;
+          setTimeout(showEnd, 900);
+        }
+      }
+    } else {
+      zone.classList.add('wrong');
+      document.getElementById('feedback').textContent = 'Yanlış! Tekrar dene.';
+      setTimeout(() => zone.classList.remove('wrong'), 700);
+    }
+
+    draggedCard = null;
+  }
+
+  function nextRound() {
+    if (gameOver) return;
+    currentRound++;
+    if (currentRound >= TOTAL_ROUNDS) { showEnd(); return; }
+    renderRound();
+  }
+
+  function showEnd() {
+    document.getElementById('main').style.display = 'none';
+    const end = document.getElementById('end-screen');
+    end.classList.add('show');
+    const total = TOTAL_ROUNDS * ROUND_SIZE * 10;
+    document.getElementById('final-score').textContent = `${score} / ${total}`;
+    const pct = (score / total) * 100;
+    let msg;
+    if (pct === 100) msg = 'Mükemmel! Tüm eşleşmeleri doğru yaptın!';
+    else if (pct >= 70) msg = 'Harika iş! Çok az hata yaptın.';
+    else if (pct >= 40) msg = 'İyi gidiyorsun, biraz daha pratik yapabilirsin!';
+    else msg = 'Ön ekleri tekrar gözden geçirmeyi dene!';
+    document.getElementById('final-msg').textContent = msg;
+  }
+
+  function restartGame() {
+    score = 0; correctTotal = 0; currentRound = 0; gameOver = false;
+    document.getElementById('score').textContent = 0;
+    document.getElementById('correct-total').textContent = 0;
+    document.getElementById('end-screen').classList.remove('show');
+    document.getElementById('main').style.display = '';
+    buildRounds();
+    renderRound();
+  }
+
+  buildRounds();
+  renderRound();
+</script>
+</body>
+</html>
