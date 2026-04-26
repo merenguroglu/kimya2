@@ -15,85 +15,89 @@
       flex-direction: column;
       align-items: center;
       padding: 2rem 1rem;
-      /* Sayfanın touch sırasında kaydırılmasını engelle */
-      overscroll-behavior: none;
     }
-    h1 { font-size: 1.6rem; font-weight: 600; margin-bottom: 0.25rem; color: #fff; }
-    .subtitle { font-size: 0.85rem; color: #888; margin-bottom: 1.5rem; }
+    h1 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.25rem; color: #fff; }
+    .subtitle { font-size: 0.85rem; color: #888; margin-bottom: 1.5rem; text-align:center; }
+
     .scoreboard { display: flex; gap: 2rem; margin-bottom: 1.5rem; }
     .score-box { text-align: center; }
     .score-box .label { font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 0.06em; }
-    .score-box .val { font-size: 1.6rem; font-weight: 600; color: #fff; }
+    .score-box .val   { font-size: 1.6rem; font-weight: 600; color: #fff; }
+
     .progress-bar { width: 100%; max-width: 640px; height: 4px; background: #2a2a3a; border-radius: 2px; margin-bottom: 2rem; overflow: hidden; }
     .progress-fill { height: 100%; background: #4ade80; border-radius: 2px; transition: width 0.4s ease; }
 
     #screen-game { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 700px; }
     #screen-end  { display: none; flex-direction: column; align-items: center; text-align: center; gap: 1rem; }
 
-    .game-area { display: flex; gap: 2rem; width: 100%; align-items: flex-start; justify-content: center; flex-wrap: wrap; }
-    .column { display: flex; flex-direction: column; gap: 12px; flex: 1; min-width: 150px; }
-    .col-title { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: #666; margin-bottom: 4px; text-align: center; }
+    .game-area { display: flex; gap: 1.5rem; width: 100%; justify-content: center; flex-wrap: wrap; }
+    .column    { display: flex; flex-direction: column; gap: 10px; flex: 1; min-width: 140px; max-width: 280px; }
+    .col-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #666; margin-bottom: 4px; text-align: center; }
 
+    /* KART */
     .card {
       background: #1a1b2e;
-      border: 1.5px solid #2e2e4e;
+      border: 2px solid #2e2e4e;
       border-radius: 10px;
-      padding: 0.75rem 1rem;
+      padding: 0.7rem 0.8rem;
       font-size: 15px;
-      cursor: grab;
-      user-select: none;
-      -webkit-user-select: none;
-      touch-action: none;  /* touch'un scroll'u tetiklememesi için */
       text-align: center;
-      transition: border-color 0.15s;
+      cursor: pointer;
+      user-select: none;
+      transition: border-color 0.15s, background 0.15s, transform 0.1s;
     }
-    .card.dragging {
-      opacity: 0.5;
+    .card:active { transform: scale(0.96); }
+    .card.selected {
       border-color: #6366f1;
+      background: #1e1f40;
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.35);
     }
     .card.matched {
       background: #0f2e1a;
       border-color: #4ade80;
       color: #4ade80;
       cursor: default;
-      touch-action: auto;
     }
 
-    /* Sürüklenen klon (floating ghost) */
-    #drag-ghost {
-      position: fixed;
-      pointer-events: none;
-      background: #2a2b45;
-      border: 1.5px solid #6366f1;
-      border-radius: 10px;
-      padding: 0.75rem 1rem;
-      font-size: 15px;
-      color: #e8e8e8;
-      text-align: center;
-      z-index: 9999;
-      opacity: 0.9;
-      display: none;
-      min-width: 100px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-      transform: translate(-50%, -50%);
-    }
-
+    /* DROP ZONE */
     .drop-zone {
       background: #12121e;
-      border: 1.5px dashed #2e2e4e;
+      border: 2px dashed #2e2e4e;
       border-radius: 10px;
-      padding: 0.75rem 1rem;
+      padding: 0.7rem 0.8rem;
       min-height: 48px;
       text-align: center;
       font-size: 14px;
       color: #ccc;
+      cursor: pointer;
       transition: border-color 0.15s, background 0.15s;
+      user-select: none;
     }
-    .drop-zone.over    { border-color: #6366f1; background: #1a1a35; }
-    .drop-zone.correct { background: #0f2e1a; border-color: #4ade80; color: #4ade80; border-style: solid; }
-    .drop-zone.wrong   { background: #2e0f0f; border-color: #f87171; color: #f87171; border-style: solid; }
+    .drop-zone.highlight {
+      border-color: #6366f1;
+      background: #1a1a35;
+    }
+    .drop-zone.correct {
+      background: #0f2e1a;
+      border-color: #4ade80;
+      color: #4ade80;
+      border-style: solid;
+      cursor: default;
+    }
+    .drop-zone.wrong {
+      background: #2e0f0f;
+      border-color: #f87171;
+      border-style: solid;
+    }
 
-    .feedback-msg { text-align: center; font-size: 14px; min-height: 1.5rem; margin-top: 1.5rem; color: #aaa; }
+    .hint-text {
+      font-size: 12px;
+      color: #555;
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .feedback-msg { text-align: center; font-size: 14px; min-height: 1.4rem; margin-top: 1.5rem; color: #aaa; }
 
     .btn {
       margin-top: 1.5rem; padding: 0.6rem 2rem; border-radius: 8px;
@@ -103,14 +107,14 @@
     .btn:hover { background: #252540; }
 
     .big-score { font-size: 3.5rem; font-weight: 700; color: #4ade80; margin-top: 1rem; }
-    .end-msg { font-size: 1rem; color: #aaa; }
+    .end-msg   { font-size: 1rem; color: #aaa; }
     sub { font-size: 0.65em; }
   </style>
 </head>
 <body>
 
-<h1>⚗️ HTML Bileşik Eşleştirme</h1>
-<p class="subtitle">Formülleri doğru isimleriyle eşleştir</p>
+<h1>HTML Bileşik Eşleştirme</h1>
+<p class="subtitle">Formüle tıkla, sonra doğru isme tıkla</p>
 
 <div class="scoreboard">
   <div class="score-box"><div class="label">Puan</div><div class="val" id="score">0</div></div>
@@ -121,6 +125,7 @@
 <div class="progress-bar"><div class="progress-fill" id="progress" style="width:20%"></div></div>
 
 <div id="screen-game">
+  <p class="hint-text" id="hint-text">Önce bir formüle tıkla</p>
   <div class="game-area">
     <div class="column">
       <div class="col-title">Formüller</div>
@@ -131,18 +136,15 @@
       <div id="dropzones"></div>
     </div>
   </div>
-  <p class="feedback-msg" id="feedback">Formülü sürükle, doğru isme bırak!</p>
+  <p class="feedback-msg" id="feedback"></p>
   <button class="btn" id="next-btn" style="display:none" onclick="nextRound()">Sonraki tur →</button>
 </div>
 
 <div id="screen-end">
   <div class="big-score" id="final-score"></div>
   <div class="end-msg"   id="final-msg"></div>
-  <button class="btn" style="display:block;margin-top:1rem" onclick="restartGame()">🔄 Tekrar oyna</button>
+  <button class="btn" style="display:block;margin-top:1rem" onclick="restartGame()">Tekrar oyna</button>
 </div>
-
-<!-- Sürükleme sırasında parmağın altında görünen klon -->
-<div id="drag-ghost"></div>
 
 <script>
 var ALL = [
@@ -176,15 +178,15 @@ var roundIdx   = 0;
 var score      = 0;
 var correctAll = 0;
 var matched    = 0;
-var dragCard   = null;  // aktif sürüklenen kart elementi
-
-var ghost = document.getElementById('drag-ghost');
+var selected   = null;  // seçili kart elementi
 
 function shuffle(a) { return a.slice().sort(function() { return Math.random() - 0.5; }); }
 
-function fmtFormula(str) {
+function fmt(str) {
   return str.replace(/[₀-₉]+/g, function(m) {
-    return '<sub>' + Array.from(m).map(function(c) { return '₀₁₂₃₄₅₆₇₈₉'.indexOf(c); }).join('') + '</sub>';
+    return '<sub>' + Array.from(m).map(function(c) {
+      return '₀₁₂₃₄₅₆₇₈₉'.indexOf(c);
+    }).join('') + '</sub>';
   });
 }
 
@@ -196,17 +198,36 @@ function buildGame() {
   }
 }
 
+function setFeedback(txt) {
+  document.getElementById('feedback').textContent = txt;
+}
+
+function setHint(txt) {
+  document.getElementById('hint-text').textContent = txt;
+}
+
+function clearSelected() {
+  if (selected) {
+    selected.classList.remove('selected');
+    selected = null;
+  }
+  // drop zone highlight kaldır
+  document.querySelectorAll('.drop-zone').forEach(function(z) {
+    z.classList.remove('highlight');
+  });
+}
+
 function renderRound() {
   matched  = 0;
-  dragCard = null;
-  ghost.style.display = 'none';
+  selected = null;
 
   var pairs = roundData[roundIdx];
 
   document.getElementById('round-num').textContent  = (roundIdx + 1) + ' / ' + TOTAL_ROUNDS;
   document.getElementById('progress').style.width   = ((roundIdx + 1) / TOTAL_ROUNDS * 100) + '%';
-  document.getElementById('feedback').textContent   = 'Formülü sürükle, doğru isme bırak!';
   document.getElementById('next-btn').style.display = 'none';
+  setFeedback('');
+  setHint('Önce bir formüle tıkla');
 
   /* Formül kartları */
   var fEl = document.getElementById('formulas');
@@ -215,18 +236,8 @@ function renderRound() {
     var card = document.createElement('div');
     card.className   = 'card';
     card.dataset.key = item.f;
-    card.innerHTML   = fmtFormula(item.f);
-
-    /* --- MOUSE events --- */
-    card.addEventListener('mousedown', function(e) { startDrag(card, e.clientX, e.clientY); });
-
-    /* --- TOUCH events --- */
-    card.addEventListener('touchstart', function(e) {
-      e.preventDefault();
-      var t = e.touches[0];
-      startDrag(card, t.clientX, t.clientY);
-    }, { passive: false });
-
+    card.innerHTML   = fmt(item.f);
+    card.addEventListener('click', function() { onCardClick(card); });
     fEl.appendChild(card);
   });
 
@@ -238,105 +249,68 @@ function renderRound() {
     zone.className   = 'drop-zone';
     zone.dataset.key = item.f;
     zone.textContent = item.n;
+    zone.addEventListener('click', function() { onZoneClick(zone); });
     dEl.appendChild(zone);
   });
 }
 
-/* ---- DRAG LOGIC (hem mouse hem touch) ---- */
-
-function startDrag(card, cx, cy) {
+function onCardClick(card) {
   if (card.classList.contains('matched')) return;
-  dragCard = card;
-  card.classList.add('dragging');
 
-  ghost.innerHTML    = card.innerHTML;
-  ghost.style.left   = cx + 'px';
-  ghost.style.top    = cy + 'px';
-  ghost.style.display = 'block';
-}
+  // Zaten seçiliyse seçimi kaldır
+  if (selected === card) {
+    clearSelected();
+    setHint('Önce bir formüle tıkla');
+    setFeedback('');
+    return;
+  }
 
-function moveDrag(cx, cy) {
-  if (!dragCard) return;
-  ghost.style.left = cx + 'px';
-  ghost.style.top  = cy + 'px';
+  clearSelected();
+  selected = card;
+  card.classList.add('selected');
 
-  // Hangi drop-zone'un üzerindeyiz?
-  ghost.style.display = 'none';  // geçici gizle ki elementFromPoint çalışsın
-  var el = document.elementFromPoint(cx, cy);
-  ghost.style.display = 'block';
-
-  // Tüm zone'ların 'over' sınıfını temizle
+  // Eşleşmemiş drop-zone'ları highlight et
   document.querySelectorAll('.drop-zone').forEach(function(z) {
-    z.classList.remove('over');
+    if (!z.classList.contains('correct')) z.classList.add('highlight');
   });
 
-  // Üzerindeysen işaretle
-  var zone = el ? el.closest('.drop-zone') : null;
-  if (zone && !zone.classList.contains('correct')) {
-    zone.classList.add('over');
-  }
+  setHint('Şimdi doğru isme tıkla');
+  setFeedback('');
 }
 
-function endDrag(cx, cy) {
-  if (!dragCard) return;
-
-  ghost.style.display = 'none';
-  dragCard.classList.remove('dragging');
-
-  // Bırakılan noktadaki elementi bul
-  ghost.style.display = 'none';
-  var el = document.elementFromPoint(cx, cy);
-  var zone = el ? el.closest('.drop-zone') : null;
-
-  document.querySelectorAll('.drop-zone').forEach(function(z) { z.classList.remove('over'); });
-
-  if (zone) {
-    handleDrop(zone);
-  } else {
-    dragCard = null;
+function onZoneClick(zone) {
+  if (zone.classList.contains('correct')) return;
+  if (!selected) {
+    setFeedback('Önce bir formül seçmelisin.');
+    return;
   }
-}
 
-/* --- Global mouse listeners --- */
-document.addEventListener('mousemove', function(e) { moveDrag(e.clientX, e.clientY); });
-document.addEventListener('mouseup',   function(e) { endDrag(e.clientX, e.clientY); });
-
-/* --- Global touch listeners --- */
-document.addEventListener('touchmove', function(e) {
-  if (!dragCard) return;
-  e.preventDefault();
-  var t = e.touches[0];
-  moveDrag(t.clientX, t.clientY);
-}, { passive: false });
-
-document.addEventListener('touchend', function(e) {
-  if (!dragCard) return;
-  var t = e.changedTouches[0];
-  endDrag(t.clientX, t.clientY);
-});
-
-/* ---- DROP LOGIC ---- */
-function handleDrop(zone) {
-  if (!dragCard) return;
-  if (zone.classList.contains('correct')) { dragCard = null; return; }
-
-  var key = dragCard.dataset.key;
+  var key = selected.dataset.key;
 
   if (key === zone.dataset.key) {
+    // DOĞRU
+    zone.classList.remove('highlight');
     zone.classList.add('correct');
-    dragCard.classList.add('matched');
-    dragCard.classList.remove('dragging');
-    dragCard = null;
+    selected.classList.add('matched');
+    selected.classList.remove('selected');
+    selected = null;
+
+    // Diğer highlight'ları kaldır
+    document.querySelectorAll('.drop-zone').forEach(function(z) {
+      z.classList.remove('highlight');
+    });
 
     score++;
     correctAll++;
     matched++;
     document.getElementById('score').textContent         = score * 10;
     document.getElementById('correct-count').textContent = correctAll;
-    document.getElementById('feedback').textContent      = '✓ Doğru eşleşme!';
+    setFeedback('Doğru eşleşme.');
+    setHint(matched < ROUND_SIZE ? 'Sıradaki formüle tıkla' : '');
 
     if (matched === ROUND_SIZE) {
-      document.getElementById('feedback').textContent = '🎉 Tur tamamlandı!';
+      setFeedback('Tur tamamlandı.');
+      setHint('');
       if (roundIdx === TOTAL_ROUNDS - 1) {
         setTimeout(showEnd, 900);
       } else {
@@ -344,10 +318,11 @@ function handleDrop(zone) {
       }
     }
   } else {
+    // YANLIŞ
     zone.classList.add('wrong');
-    document.getElementById('feedback').textContent = '✗ Yanlış! Tekrar dene.';
+    setFeedback('Yanlış. Başka bir isim dene.');
     setTimeout(function() { zone.classList.remove('wrong'); }, 700);
-    dragCard = null;
+    // Seçim devam eder — tekrar deneyebilir
   }
 }
 
@@ -363,10 +338,10 @@ function showEnd() {
   document.getElementById('final-score').textContent = (score * 10) + ' / ' + (total * 10);
   var pct = score / total;
   document.getElementById('final-msg').textContent =
-    pct === 1   ? 'Mükemmel! Tüm eşleşmeleri doğru yaptın! 🏆' :
-    pct >= 0.7  ? 'Harika iş! Çok az hata yaptın.' :
-    pct >= 0.4  ? 'İyi gidiyorsun, biraz daha pratik yapabilirsin!' :
-                  'Ön ekleri tekrar gözden geçirmeyi dene!';
+    pct === 1   ? 'Mükemmel. Tüm eşleşmeleri doğru yaptın. ' :
+    pct >= 0.7  ? 'Harika. Çok az hata yaptın.' :
+    pct >= 0.4  ? 'İyi gidiyorsun, biraz daha pratik yapabilirsin.' :
+                  'Ön ekleri tekrar gözden geçirmeyi dene.';
 }
 
 function restartGame() {
